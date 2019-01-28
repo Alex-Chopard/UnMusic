@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         progress.setMax(mediaPlayer.getDuration() / 1000);
         volume.setMax(100);
+        volume.setProgress(40);
 
         //Make sure you update Seekbar on UI thread.
         MainActivity.this.runOnUiThread(new Runnable() {
