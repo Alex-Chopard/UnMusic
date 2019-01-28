@@ -1,56 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/iv_music"
-        android:layout_width="200dp"
-        android:layout_height="200dp" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/infozone"
+        android:layout_width="350dp"
+        android:layout_height="300dp"
+        android:orientation="vertical"
+        android:layout_alignBottom="@+id/sb_volume">
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Title"
-        android:layout_below="@+id/iv_music"/>
+        <ImageView
+            android:id="@+id/iv_music"
+            android:layout_width="match_parent"
+            android:layout_height="280dp" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_="@id/sb_volume"
+            
+            android:text="Title" />
+    </LinearLayout>
 
     <SeekBar
         android:id="@+id/sb_volume"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:rotation="270"
-        android:layout_toRightOf="@id/iv_music"/>
+        android:layout_width="50dp"
+        android:layout_height="300dp"
+        android:layout_toRightOf="@id/infozone"
+        android:rotation="270" />
 
-    <ImageView
-        android:id="@+id/iv_left"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        app:srcCompat="?attr/homeAsUpIndicator"
-        android:layout_below="@+id/tv_title"/>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/playzone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/infozone"
+        android:layout_centerHorizontal="true">
+
+        <ImageView
+            android:id="@+id/iv_left"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:srcCompat="?attr/homeAsUpIndicator" />
 
 
-    <ImageView
-        android:id="@+id/iv_play"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        app:srcCompat="@android:drawable/ic_media_play"
-        android:layout_below="@+id/tv_title"
-        android:layout_toRightOf="@+id/iv_left"/>
+        <ImageView
+            android:id="@+id/iv_play"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:srcCompat="@android:drawable/ic_media_play" />
 
-    <ImageView
-        android:id="@+id/iv_rigth"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        app:srcCompat="?attr/homeAsUpIndicator"
-        android:layout_below="@+id/tv_title"
-        android:layout_toRightOf="@+id/iv_play"
-        android:rotation="180"/>
+        <ImageView
+            android:id="@+id/iv_rigth"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:rotation="180"
+            app:srcCompat="?attr/homeAsUpIndicator" />
+    </LinearLayout>
 
     <SeekBar
         android:id="@+id/sb_avancement"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_below="@+id/iv_left"/>
+        android:layout_below="@+id/playzone" />
 
 </RelativeLayout>
