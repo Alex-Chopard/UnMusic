@@ -4,41 +4,52 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-  private int i;
-  private Context context;
-  private MediaPlayer mediaPlayer;
+    private Context context;
+    private MediaPlayer mediaPlayer;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
-    i = 0;
-    context = getBaseContext();
-
-    /* Button button = (Button) findViewById(R.id.button);
-    button.setOnClickListener(new Button.OnClickListener() {
-      public void onClick(View v) {
-        i ++;
-        Toast.makeText(context, "Sloubi " + i, Toast.LENGTH_SHORT).show();
-      }
-    }); */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        context = getBaseContext();
 
 
-    mediaPlayer = MediaPlayer.create(context, R.raw.igorrr_viande);
+        ImageView play = findViewById(R.id.iv_play);
+        play.setOnClickListener(this);
 
-    mediaPlayer.start();
-  }
+        mediaPlayer = MediaPlayer.create(context, R.raw.igorrr_viande);
+    }
 
-  @Override
-  protected void onPause() {
-    super.onPause();
-    mediaPlayer.stop();
-    mediaPlayer.release();
-  }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mediaPlayer.stop();
+        mediaPlayer.release();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int vId = v.getId();
+        switch (vId) {
+            case R.id.iv_play:
+                ImageView play = findViewById(R.id.iv_play);
+
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.pause();
+                    play.setImageResource(android.R.drawable.ic_media_play);
+                } else {
+                    mediaPlayer.start();
+                    play.setImageResource(android.R.drawable.ic_media_pause);
+                }
+                break;
+        }
+    }
 }
