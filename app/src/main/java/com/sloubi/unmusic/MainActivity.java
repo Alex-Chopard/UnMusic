@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Handler mHandler = new Handler();
 
     private SeekBar progress;
+    private SeekBar volume;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,12 +27,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ImageView play = findViewById(R.id.iv_play);
         progress = findViewById(R.id.sb_avancement);
+        volume = findViewById(R.id.sb_volume);
 
         play.setOnClickListener(this);
         progress.setOnSeekBarChangeListener(this);
+        volume.setOnSeekBarChangeListener(this);
 
         mediaPlayer = MediaPlayer.create(getBaseContext(), R.raw.igorrr_viande);
+        mediaPlayer.setVolume(0.1f, 0.1f);
+
         progress.setMax(mediaPlayer.getDuration() / 1000);
+        volume.setMax(100);
 
         //Make sure you update Seekbar on UI thread.
         MainActivity.this.runOnUiThread(new Runnable() {
@@ -73,8 +79,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if(mediaPlayer != null && fromUser){
-            mediaPlayer.seekTo(progress * 1000);
+        int sId = seekBar.getId();
+
+        if(mediaPlayer != null && fromUser) {
+            switch (sId) {
+                case R.id.sb_avancement:
+                    mediaPlayer.seekTo(progress * 1000);
+                    break;
+                case R.id.sb_volume:
+                    Float volume = progress / 100.0f;
+                    mediaPlayer.setVolume(volume, volume);
+                    break;
+            }
         }
     }
 
