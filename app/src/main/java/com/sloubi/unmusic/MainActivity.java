@@ -21,13 +21,13 @@ public class MainActivity extends AppCompatActivity {
     i = 0;
     context = getBaseContext();
 
-    Button button = (Button) findViewById(R.id.button);
+    /* Button button = (Button) findViewById(R.id.button);
     button.setOnClickListener(new Button.OnClickListener() {
       public void onClick(View v) {
         i ++;
         Toast.makeText(context, "Sloubi " + i, Toast.LENGTH_SHORT).show();
       }
-    });
+    }); */
 
 
     mediaPlayer = MediaPlayer.create(context, R.raw.igorrr_viande);
