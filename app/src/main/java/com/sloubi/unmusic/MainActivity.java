@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         volume.setOnSeekBarChangeListener(this);
 
         mediaPlayer = MediaPlayer.create(getBaseContext(), R.raw.igorrr_viande);
-        mediaPlayer.setVolume(0.1f, 0.1f);
+        mediaPlayer.setVolume(0.4f, 0.4f);
 
         progress.setMax(mediaPlayer.getDuration() / 1000);
         volume.setMax(100);
