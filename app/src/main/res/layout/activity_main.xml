@@ -2,36 +2,51 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:gravity="bottom"
+    android:padding="20dp">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/infozone"
-        android:layout_width="350dp"
+        android:layout_width="310dp"
         android:layout_height="300dp"
-        android:orientation="vertical"
-        android:layout_alignBottom="@+id/sb_volume">
+        android:layout_alignBottom="@+id/sb_volume"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/iv_music"
             android:layout_width="match_parent"
-            android:layout_height="280dp" />
+            android:layout_height="270dp"
+            android:padding="20dp" />
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_="@id/sb_volume"
-            
-            android:text="Title" />
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="Title"
+            android:textColor="@color/textPrimary" />
     </LinearLayout>
 
-    <SeekBar
-        android:id="@+id/sb_volume"
+    <FrameLayout
         android:layout_width="50dp"
         android:layout_height="300dp"
-        android:layout_toRightOf="@id/infozone"
-        android:rotation="270" />
+        android:orientation="vertical"
+        android:layout_toRightOf="@id/infozone">
+
+
+        <SeekBar
+            android:id="@+id/sb_volume"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:rotation="270"
+            android:thumb="@drawable/thumb_for_seekbar"
+            android:background="@color/colorSecondary"/>
+    </FrameLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -39,7 +54,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/infozone"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp">
 
         <ImageView
             android:id="@+id/iv_left"
@@ -66,6 +82,8 @@
         android:id="@+id/sb_avancement"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_below="@+id/playzone" />
+        android:layout_below="@+id/playzone"
+        android:background="@color/colorSecondary"
+        android:thumb="@drawable/thumb_for_seekbar" />
 
 </RelativeLayout>
