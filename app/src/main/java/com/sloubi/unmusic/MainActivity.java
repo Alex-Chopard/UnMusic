@@ -12,13 +12,16 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.sloubi.unmusic.acceleroPackage.GestionAccelerometre;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private MediaPlayer mediaPlayer;
     private Handler mHandler = new Handler();
-
     private SeekBar progress;
     private SeekBar volume;
+    private boolean accelroIsActivate = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         progress.setOnSeekBarChangeListener(this);
         volume.setOnSeekBarChangeListener(this);
 
+
         mediaPlayer = MediaPlayer.create(getBaseContext(), R.raw.igorrr_viande);
         mediaPlayer.setVolume(0.4f, 0.4f);
 
@@ -40,11 +44,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         volume.setMax(100);
         volume.setProgress(40);
 
+
         //Make sure you update Seekbar on UI thread.
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(mediaPlayer != null) {
+                if (mediaPlayer != null) {
                     int mCurrentPosition = mediaPlayer.getCurrentPosition() / 1000;
                     progress.setProgress(mCurrentPosition);
                 }
@@ -62,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+
         int vId = v.getId();
         switch (vId) {
             case R.id.iv_play:
@@ -78,18 +84,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void gestionAccelero(String id,boolean estHorizontal) {
+        GestionAccelerometre piloteAccelero = new GestionAccelerometre(this.getBaseContext(),mediaPlayer);
+        if (!accelroIsActivate) {
+            piloteAccelero.start((SeekBar) findViewById(Integer.valueOf( id)),estHorizontal);
+            accelroIsActivate = true;
+        } else {
+            boolean endWork = piloteAccelero.end((SeekBar) findViewById(Integer.valueOf( id)));
+            if (endWork) {
+                accelroIsActivate = false;
+            }
+        }
+    }
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         int sId = seekBar.getId();
 
-        if(mediaPlayer != null && fromUser) {
+        if (mediaPlayer != null && fromUser) {
             switch (sId) {
                 case R.id.sb_avancement:
-                    mediaPlayer.seekTo(progress * 1000);
+                    //mediaPlayer.seekTo(progress * 1000);
+                    gestionAccelero(String.valueOf(R.id.sb_avancement),true);
                     break;
                 case R.id.sb_volume:
-                    Float volume = progress / 100.0f;
-                    mediaPlayer.setVolume(volume, volume);
+                    //Float volume = progress / 100.0f;
+                    gestionAccelero(String.valueOf(R.id.sb_volume),false);
+                    // mediaPlayer.setVolume(volume, volume);
                     break;
             }
         }
