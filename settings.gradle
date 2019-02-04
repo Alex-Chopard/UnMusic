@@ -1,1 +1,5 @@
+<<<<<<< Updated upstream
 include ':app', ':spotify-app-remote'
+=======
+include ':app', ':spotify-app-remote-release-0.6.0'
+>>>>>>> Stashed changes
