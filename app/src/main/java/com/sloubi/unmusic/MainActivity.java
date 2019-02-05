@@ -1,8 +1,13 @@
 package com.sloubi.unmusic;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.sloubi.unmusic.service.LocationService;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private MediaPlayer mediaPlayer;
@@ -19,13 +26,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private SeekBar progress;
     private SeekBar volume;
+    private ImageView play;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageView play = findViewById(R.id.iv_play);
+        // Start listening the broadcaster.
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter(LocationService.LOCATION_SERVICE_BRODCAST_NAME));
+
+        this.play = findViewById(R.id.iv_play);
         progress = findViewById(R.id.sb_avancement);
         volume = findViewById(R.id.sb_volume);
 
@@ -51,6 +63,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mHandler.postDelayed(this, 1000);
             }
         });
+
+        // Start location service.
+        startService(new Intent(this, LocationService.class));
     }
 
     @Override
@@ -58,6 +73,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onPause();
         mediaPlayer.stop();
         mediaPlayer.release();
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
     }
 
     @Override
@@ -103,5 +125,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            double latitude = intent.getDoubleExtra("latitude", 0);
+            double longiture = intent.getDoubleExtra("longiture", 0);
+            double altitude = intent.getDoubleExtra("altitude", 0);
+
+            int r = createColorFromNumber(latitude * longiture);
+            int g = createColorFromNumber(latitude * altitude);
+            int b = createColorFromNumber(altitude * longiture);
+
+            play.setColorFilter(Color.rgb(r, g, b));
+        }
+    };
+
+    public int createColorFromNumber (double number) {
+        return (int) ((number * 10000) % 255);
     }
 }
