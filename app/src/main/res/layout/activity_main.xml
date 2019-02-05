@@ -47,6 +47,12 @@
             android:progressDrawable="@drawable/progress_for_seekbar"
             android:rotation="270"
             android:thumb="@drawable/thumb_for_seekbar" />
+
+        <Button
+            android:id="@+id/btn_volume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Volume" />
     </FrameLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -90,7 +96,7 @@
 
     <SeekBar
         android:id="@+id/sb_avancement"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_below="@+id/playzone"
         android:padding="20dp"
@@ -99,5 +105,14 @@
         android:thumb="@drawable/thumb_for_seekbar"
 
         />
+
+    <Button
+        android:id="@+id/btn_timming"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_toRightOf="@id/sb_avancement"
+        android:layout_alignBottom="@id/sb_avancement"
+        android:text="Timming" />
+
 
 </RelativeLayout>

@@ -16,7 +16,7 @@ import static android.content.Context.WINDOW_SERVICE;
 
 public class GestionAccelerometre implements SensorEventListener {
     private Display mDisplay;
-    static SeekBar runningSeekbar = null;
+    private SeekBar runningSeekbar = null;
     private boolean estHorizontal = false;
     SensorManager sensorManager;
     Sensor accelerometer;
@@ -32,38 +32,32 @@ public class GestionAccelerometre implements SensorEventListener {
         this.player = player;
     }
 
-    public void start(SeekBar id, boolean estHorizontal) {
-        runningSeekbar = id;
+    public void setSeekBar(SeekBar runningSeekbar, boolean estHorizontal) {
+        this.runningSeekbar = runningSeekbar;
         this.estHorizontal = estHorizontal;
     }
 
-    public boolean end(SeekBar id) {
-        if (runningSeekbar.equals(id)) {
-            runningSeekbar = null;
-            return true;
-        }
-        return false;
+    public void unssetSeekBar() {
+        this.runningSeekbar = null;
     }
 
-    private void seekBarController(int value) {
-        player.seekTo(value);
+    private void timeController(int value) {
+        player.seekTo(value * 1000);
+        runningSeekbar.setProgress(value * 1000);
     }
 
     private void playerController(int value) {
-        if (estHorizontal) {
-
-        } else {
-            Float volume = value / 100.0f;
-            player.setVolume(volume, volume);
-        }
+        Float volume = value / 100.0f;
+        player.setVolume(volume, volume);
+        runningSeekbar.setProgress(value);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
-        int value = 0;
-        int facteurProgression = 0;
         if (runningSeekbar != null) {
+            int value = 0;
+            int facteurProgression = 0;
+            Log.i("logN1", estHorizontal + "");
             value = runningSeekbar.getProgress();
             float prog = 0;
             if (estHorizontal)
@@ -73,10 +67,12 @@ public class GestionAccelerometre implements SensorEventListener {
             facteurProgression = (int) Math.floor(prog * 5.0);
 
             value = (50 - facteurProgression);
-            seekBarController(value);
-            playerController(value);
+            if (estHorizontal) {
+                playerController(value);
+            } else {
+                timeController(value);
+            }
         }
-
     }
 
     @Override

@@ -21,6 +21,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SeekBar progress;
     private SeekBar volume;
     private boolean accelroIsActivate = false;
+    private GestionAccelerometre piloteAccelero;
+    private Button btn_timming;
+    private Button btn_volume;
 
 
     @Override
@@ -31,10 +34,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ImageView play = findViewById(R.id.iv_play);
         progress = findViewById(R.id.sb_avancement);
         volume = findViewById(R.id.sb_volume);
+        btn_timming = findViewById(R.id.btn_timming);
+        btn_volume = findViewById(R.id.btn_volume);
+
 
         play.setOnClickListener(this);
         progress.setOnSeekBarChangeListener(this);
         volume.setOnSeekBarChangeListener(this);
+        btn_timming.setOnClickListener(this);
+        btn_volume.setOnClickListener(this);
 
 
         mediaPlayer = MediaPlayer.create(getBaseContext(), R.raw.igorrr_viande);
@@ -44,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         volume.setMax(100);
         volume.setProgress(40);
 
-
+        piloteAccelero = new GestionAccelerometre(this.getBaseContext(), mediaPlayer);
         //Make sure you update Seekbar on UI thread.
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
@@ -81,39 +89,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     play.setImageResource(android.R.drawable.ic_media_pause);
                 }
                 break;
+            case R.id.btn_timming:
+                gestionAccelero(String.valueOf(R.id.sb_avancement), true);
+                break;
+            case R.id.btn_volume:
+                gestionAccelero(String.valueOf(R.id.sb_volume), false);
+                break;
         }
     }
 
-    private void gestionAccelero(String id,boolean estHorizontal) {
-        GestionAccelerometre piloteAccelero = new GestionAccelerometre(this.getBaseContext(),mediaPlayer);
+    private void gestionAccelero(String id, boolean estHorizontal) {
         if (!accelroIsActivate) {
-            piloteAccelero.start((SeekBar) findViewById(Integer.valueOf( id)),estHorizontal);
+            piloteAccelero.setSeekBar((SeekBar) findViewById(Integer.valueOf(id)), estHorizontal);
             accelroIsActivate = true;
         } else {
-            boolean endWork = piloteAccelero.end((SeekBar) findViewById(Integer.valueOf( id)));
-            if (endWork) {
-                accelroIsActivate = false;
-            }
+            piloteAccelero.unssetSeekBar();
+            accelroIsActivate = false;
         }
+
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        int sId = seekBar.getId();
 
-        if (mediaPlayer != null && fromUser) {
-            switch (sId) {
-                case R.id.sb_avancement:
-                    //mediaPlayer.seekTo(progress * 1000);
-                    gestionAccelero(String.valueOf(R.id.sb_avancement),true);
-                    break;
-                case R.id.sb_volume:
-                    //Float volume = progress / 100.0f;
-                    gestionAccelero(String.valueOf(R.id.sb_volume),false);
-                    // mediaPlayer.setVolume(volume, volume);
-                    break;
-            }
-        }
     }
 
     @Override
