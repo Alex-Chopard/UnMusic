@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
@@ -33,10 +34,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Start listening the broadcaster.
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                new IntentFilter(LocationService.LOCATION_SERVICE_BRODCAST_NAME));
-
         this.play = findViewById(R.id.iv_play);
         progress = findViewById(R.id.sb_avancement);
         volume = findViewById(R.id.sb_volume);
@@ -63,6 +60,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mHandler.postDelayed(this, 1000);
             }
         });
+
+
+        // Start listening the broadcaster.
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter(LocationService.LOCATION_SERVICE_BRODCAST_NAME));
 
         // Start location service.
         startService(new Intent(this, LocationService.class));
@@ -139,7 +141,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             int g = createColorFromNumber(latitude * altitude);
             int b = createColorFromNumber(altitude * longiture);
 
-            play.setColorFilter(Color.rgb(r, g, b));
+            int color = Color.rgb(r, g, b);
+
+            play.setColorFilter(color);
         }
     };
 
