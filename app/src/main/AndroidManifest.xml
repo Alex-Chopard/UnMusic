@@ -26,4 +26,5 @@
     </activity>
       <service android:name=".service.LocationService" />
   </application>
+  <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
 </manifest>
