@@ -57,7 +57,6 @@ public class GestionAccelerometre implements SensorEventListener {
         if (runningSeekbar != null) {
             int value = 0;
             int facteurProgression = 0;
-            Log.i("logN1", estHorizontal + "");
             value = runningSeekbar.getProgress();
             float prog = 0;
             if (estHorizontal)

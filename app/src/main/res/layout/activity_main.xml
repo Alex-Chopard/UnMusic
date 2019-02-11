@@ -39,7 +39,7 @@
 
         <SeekBar
             android:id="@+id/sb_volume"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:padding="144dp"
