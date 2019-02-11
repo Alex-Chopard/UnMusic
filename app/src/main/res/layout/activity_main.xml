@@ -31,7 +31,7 @@
     </LinearLayout>
 
     <FrameLayout
-        android:layout_width="50dp"
+        android:layout_width="100dp"
         android:layout_height="300dp"
         android:layout_toRightOf="@id/infozone"
         android:orientation="vertical">
@@ -39,7 +39,7 @@
 
         <SeekBar
             android:id="@+id/sb_volume"
-            android:layout_width="300dp"
+            android:layout_width="230dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:padding="144dp"
@@ -50,7 +50,7 @@
 
         <Button
             android:id="@+id/btn_volume"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:text="Volume" />
     </FrameLayout>
@@ -110,8 +110,8 @@
         android:id="@+id/btn_timming"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_toRightOf="@id/sb_avancement"
         android:layout_alignBottom="@id/sb_avancement"
+        android:layout_toRightOf="@id/sb_avancement"
         android:text="Timming" />
 
 
