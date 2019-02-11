@@ -1,4 +1,4 @@
-package com.sloubi.unmusic.acceleroPackage;
+package com.sloubi.unmusic.service;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -43,12 +43,14 @@ public class GestionAccelerometre implements SensorEventListener {
 
     private void timeController(int value) {
         player.seekTo(value * 1000);
-        runningSeekbar.setProgress(value * 1000);
+        Log.i("logN2",value*runningSeekbar.getMax()/100+"");
+        runningSeekbar.setProgress(value*runningSeekbar.getMax()/100);
     }
 
-    private void playerController(int value) {
-        Float volume = value / 100.0f;
+    private void volumeController(int value) {
+        Float volume = value / 1000.0f;
         player.setVolume(volume, volume);
+        Log.i("logN1", value + "");
         runningSeekbar.setProgress(value);
     }
 
@@ -57,7 +59,6 @@ public class GestionAccelerometre implements SensorEventListener {
         if (runningSeekbar != null) {
             int value = 0;
             int facteurProgression = 0;
-            value = runningSeekbar.getProgress();
             float prog = 0;
             if (estHorizontal)
                 prog = event.values[0];
@@ -67,9 +68,9 @@ public class GestionAccelerometre implements SensorEventListener {
 
             value = (50 - facteurProgression);
             if (estHorizontal) {
-                playerController(value);
-            } else {
                 timeController(value);
+            } else {
+                volumeController(value);
             }
         }
     }
