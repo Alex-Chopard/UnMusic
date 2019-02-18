@@ -1,4 +1,4 @@
-package com.sloubi.unmusic;
+package com.sloubi.unmusic.Activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.sloubi.unmusic.Adapter.PlaylistAdapter;
 import com.sloubi.unmusic.Interface.OnMusicListDownloadListener;
 import com.sloubi.unmusic.Model.Music;
+import com.sloubi.unmusic.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;

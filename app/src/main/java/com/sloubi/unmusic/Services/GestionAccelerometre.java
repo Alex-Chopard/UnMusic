@@ -1,4 +1,4 @@
-package com.sloubi.unmusic.service;
+package com.sloubi.unmusic.Services;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -8,11 +8,9 @@ import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.Display;
-import android.view.WindowManager;
 import android.widget.SeekBar;
 
 import static android.content.Context.SENSOR_SERVICE;
-import static android.content.Context.WINDOW_SERVICE;
 
 public class GestionAccelerometre implements SensorEventListener {
     private Display mDisplay;
