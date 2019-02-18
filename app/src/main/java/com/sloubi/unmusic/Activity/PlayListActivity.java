@@ -1,8 +1,11 @@
 package com.sloubi.unmusic.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -15,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class PlayListActivity extends AppCompatActivity implements OnMusicListDownloadListener {
+public class PlayListActivity extends AppCompatActivity implements OnMusicListDownloadListener, AdapterView.OnItemClickListener {
 
     private ListView playlist;
 
@@ -25,9 +28,21 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
         setContentView(R.layout.activity_playlist);
 
         playlist = findViewById(R.id.lv_playlist);
+        playlist.setOnItemClickListener(this);
 
         // Get all music.
         Music.list(this, this);
+    }
+
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        int vId = view.getId();
+
+        // Start intent for play an music.
+        Intent intent = new Intent(this, MusicActivity.class);
+        intent.putExtra("id", vId);
+        startActivity(intent);
     }
 
     @Override
