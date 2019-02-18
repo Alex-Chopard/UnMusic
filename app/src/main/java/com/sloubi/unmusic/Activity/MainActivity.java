@@ -1,13 +1,11 @@
-package com.sloubi.unmusic;
+package com.sloubi.unmusic.Activity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -15,9 +13,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
-import com.sloubi.unmusic.service.LocationService;
-
-import com.sloubi.unmusic.service.GestionAccelerometre;
+import com.sloubi.unmusic.R;
+import com.sloubi.unmusic.Services.GestionAccelerometre;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
@@ -42,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         volume = findViewById(R.id.sb_volume);
         btn_timming = findViewById(R.id.btn_timming);
         btn_volume = findViewById(R.id.btn_volume);
+        Button btn_playlist = findViewById(R.id.btn_playlist);
 
 
         play.setOnClickListener(this);
@@ -49,9 +47,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         volume.setOnSeekBarChangeListener(this);
         btn_timming.setOnClickListener(this);
         btn_volume.setOnClickListener(this);
+        btn_playlist.setOnClickListener(this);
 
 
-        mediaPlayer = MediaPlayer.create(getBaseContext(), R.raw.igorrr_viande);
+        /*mediaPlayer = MediaPlayer.create(getBaseContext(), R.raw.igorrr_viande);
         mediaPlayer.setVolume(0.4f, 0.4f);
 
         progress.setMax(mediaPlayer.getDuration() / 1000);
@@ -77,21 +76,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new IntentFilter(LocationService.LOCATION_SERVICE_BRODCAST_NAME));
 
         // Start location service.
-        startService(new Intent(this, LocationService.class));
+        startService(new Intent(this, LocationService.class)); */
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mediaPlayer.stop();
-        mediaPlayer.release();
+        /*mediaPlayer.stop();
+        mediaPlayer.release();*/
     }
 
     @Override
     protected void onDestroy() {
-        // Unregister since the activity is about to be closed.
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
+        // Unregister since the activity is about to be closed.
+        /*LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();*/
     }
 
     @Override
@@ -115,6 +115,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_volume:
                 gestionAccelero(String.valueOf(R.id.sb_volume), false);
+                break;
+            case R.id.btn_playlist:
+                Intent intent = new Intent(this, PlayListActivity.class);
+                startActivity(intent);
                 break;
         }
     }
