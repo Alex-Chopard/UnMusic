@@ -17,7 +17,7 @@ import android.widget.SeekBar;
 
 import com.sloubi.unmusic.service.LocationService;
 
-import com.sloubi.unmusic.acceleroPackage.GestionAccelerometre;
+import com.sloubi.unmusic.service.GestionAccelerometre;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
