@@ -7,6 +7,12 @@
     android:gravity="bottom"
     android:padding="20dp">
 
+    <Button
+        android:id="@+id/btn_playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Playlist"/>
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/infozone"
