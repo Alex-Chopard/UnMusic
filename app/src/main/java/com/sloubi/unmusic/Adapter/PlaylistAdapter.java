@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -15,7 +16,7 @@ import com.sloubi.unmusic.R;
 import java.util.HashMap;
 import java.util.List;
 
-public class PlaylistAdapter extends ArrayAdapter<HashMap<String, String>> {
+public class PlaylistAdapter extends ArrayAdapter<HashMap<String, String>> implements AdapterView.OnItemClickListener{
 
     private List<HashMap<String, String>> musics;
     private Context context;
@@ -41,5 +42,12 @@ public class PlaylistAdapter extends ArrayAdapter<HashMap<String, String>> {
         musicTitle.setText(music.get("fullTitle"));
 
         return rowView;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        int vId = view.getId();
+
+        // Start intent for play an music.
     }
 }
