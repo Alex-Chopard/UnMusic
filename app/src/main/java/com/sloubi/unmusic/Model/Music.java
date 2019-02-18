@@ -1,15 +1,18 @@
 package com.sloubi.unmusic.Model;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sloubi.unmusic.CallApi;
+import com.sloubi.unmusic.Interface.OnMusicGetListener;
 import com.sloubi.unmusic.Interface.OnMusicListDownloadListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +26,7 @@ public class Music {
     private String artist;
     private String title;
     private String fullTitle;
-    private Blob data;
+    private String data;
 
     public Music(String id, String musicId, String url, String artist, String title, String fullTitle) {
         this.id = id;
@@ -63,6 +66,48 @@ public class Music {
 
                     listener.onDownloadComplete(musics);
                 } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                // Return the error message.
+                listener.onDownloadError(errorResponse.toString());
+            }
+        });
+    }
+
+    public static void get (int id, Context context, final OnMusicGetListener listener) {
+        CallApi.get(context, "/music/" + id, null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // If the response is JSONObject instead of expected JSONArray
+                try {
+                    Music music = new Music(
+                        response.getString("id"),
+                        response.getString("musicId"),
+                        response.getString("url"),
+                        response.getString("artist"),
+                        response.getString("title"),
+                        response.getString("fullTitle"));
+                    Log.i("5555555555555555", "lksjdfuh");
+                    StringBuilder base64 = new StringBuilder();
+                    JSONArray jsonArray = response.getJSONObject("data").getJSONArray("data");
+
+                    for(int i = 0; i < jsonArray.length(); i++) {
+                        int character = (int) jsonArray.get(i);
+                        base64.append((char) character);
+                    }
+
+                    music.setData(base64.toString());
+                    Log.i("0000000000000000000000", "" + music.getData().length());
+                    // TODO: Save loaded music in DB.
+
+                    listener.onDownloadComplete(music);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -117,11 +162,11 @@ public class Music {
         this.fullTitle = fullTitle;
     }
 
-    public Blob getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(Blob data) {
+    public void setData(String data) {
         this.data = data;
     }
 

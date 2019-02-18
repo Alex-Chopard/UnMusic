@@ -11,16 +11,22 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import com.sloubi.unmusic.Interface.OnMusicGetListener;
+import com.sloubi.unmusic.Model.Music;
 import com.sloubi.unmusic.R;
 import com.sloubi.unmusic.Services.GestionAccelerometre;
 import com.sloubi.unmusic.Services.LocationService;
 
-public class MusicActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+import java.io.IOException;
+
+public class MusicActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, OnMusicGetListener {
 
     private int id;
 
@@ -41,6 +47,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         this.id = getIntent().getIntExtra("id", -1);
 
+        Music.get(this.id, this, this);
+
         this.play = findViewById(R.id.iv_play);
         progress = findViewById(R.id.sb_avancement);
         volume = findViewById(R.id.sb_volume);
@@ -55,13 +63,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         btn_timming.setOnClickListener(this);
         btn_volume.setOnClickListener(this);
         btn_playlist.setOnClickListener(this);
-
-        mediaPlayer = MediaPlayer.create(getBaseContext(), R.raw.igorrr_viande);
-        mediaPlayer.setVolume(0.4f, 0.4f);
-
-        progress.setMax(mediaPlayer.getDuration() / 1000);
-        volume.setMax(100);
-        volume.setProgress(40);
 
         /* piloteAccelero = new GestionAccelerometre(this.getBaseContext(), mediaPlayer);
         //Make sure you update Seekbar on UI thread.
@@ -175,5 +176,35 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     public int createColorFromNumber (double number) {
         return (int) ((number * 10000) % 255);
+    }
+
+    @Override
+    public void onDownloadComplete(Music music) {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+        }
+
+        try {
+            String url = new String(Base64.decode(music.getData(), 0));
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(url);
+
+            mediaPlayer.prepare();
+
+            mediaPlayer.setVolume(0.4f, 0.4f);
+            progress.setMax(mediaPlayer.getDuration() / 1000);
+
+            volume.setMax(100);
+            volume.setProgress(40);
+
+            Log.i("1111111111", "ok ?");
+        } catch (IOException e) {
+            Log.i("error", e.getMessage());
+        }
+    }
+
+    @Override
+    public void onDownloadError(String error) {
+
     }
 }
