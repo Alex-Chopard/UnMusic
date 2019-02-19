@@ -8,7 +8,6 @@
     android:padding="20dp">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/infozone"
         android:layout_width="310dp"
         android:layout_height="300dp"
@@ -20,18 +19,17 @@
             android:layout_height="270dp"
             android:padding="20dp" />
 
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/infozone"
-            android:gravity="center"
-            android:visibility="gone"
-            android:text="Title"
-            android:textColor="@color/textPrimary" />
     </LinearLayout>
 
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/infozone"
+        android:gravity="center"
+        android:textColor="@color/textPrimary"
+        android:textSize="18sp" />
 
     <FrameLayout
         android:layout_width="100dp"

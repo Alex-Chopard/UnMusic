@@ -33,7 +33,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     private int id;
 
-    private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer = new MediaPlayer();
     private Handler mHandler = new Handler();
     private SeekBar progress;
     private SeekBar volume;
@@ -203,7 +203,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             buffer.write(byteMusic);
             buffer.close();
 
-            mediaPlayer = new MediaPlayer();
             mediaPlayer.setDataSource(this, Uri.fromFile(fileMusic));
             mediaPlayer.prepare();
 
