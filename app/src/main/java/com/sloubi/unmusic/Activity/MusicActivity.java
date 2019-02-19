@@ -100,8 +100,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onPause() {
         super.onPause();
-        /*mediaPlayer.stop();
-        mediaPlayer.release();*/
+        mediaPlayer.stop();
+        mediaPlayer.release();
     }
 
     @Override
@@ -187,7 +187,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onDownloadComplete(Music music) {
-        if (mediaPlayer != null) {
+        if (mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
         }
 
