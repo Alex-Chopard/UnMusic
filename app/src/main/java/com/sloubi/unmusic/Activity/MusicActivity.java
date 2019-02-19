@@ -3,16 +3,13 @@ package com.sloubi.unmusic.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,7 +20,6 @@ import com.sloubi.unmusic.Interface.OnMusicGetListener;
 import com.sloubi.unmusic.Model.Music;
 import com.sloubi.unmusic.R;
 import com.sloubi.unmusic.Services.GestionAccelerometre;
-import com.sloubi.unmusic.Services.LocationService;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -47,10 +43,11 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_music);
 
+        // Get the music id.
         this.id = getIntent().getIntExtra("id", -1);
-
+        // Start to load music data.
         Music.get(this.id, this, this);
 
         this.play = findViewById(R.id.iv_play);
