@@ -17,14 +17,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.PlayListActivity">
+        <activity android:name=".Activity.PlayListActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.MusicActivity" />
+        <activity android:name=".Activity.MusicActivity" android:screenOrientation="portrait"></activity>
         <service android:name=".Services.LocationService" />
     </application>
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
