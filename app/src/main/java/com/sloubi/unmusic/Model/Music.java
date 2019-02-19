@@ -7,12 +7,14 @@ import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sloubi.unmusic.AppDatabase;
 import com.sloubi.unmusic.Async.PopulateMusicDbAsync;
 import com.sloubi.unmusic.CallApi;
+import com.sloubi.unmusic.Interface.MusicDao;
 import com.sloubi.unmusic.Interface.OnMusicGetListener;
 import com.sloubi.unmusic.Interface.OnMusicListDownloadListener;
 import com.sloubi.unmusic.Repository.MusicRepository;
@@ -70,6 +72,20 @@ public class Music {
         this.fullTitle = fullTitle;
     }
 
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof Music){
+            Music toCompare = (Music) o;
+            return this.id.equals(toCompare.getId());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
+    }
+
     public static void list(final Context context, final OnMusicListDownloadListener listener) {
         // AsyncTask for call the DB.
         new AsyncTask<Void, Void, Void>() {
@@ -109,7 +125,6 @@ public class Music {
                     }
 
                     listener.onDownloadComplete(musics);
-                    Toast.makeText(context, "Playlist synchronized with server", Toast.LENGTH_SHORT).show();
 
                     // Insert music in DB.
                     new PopulateMusicDbAsync(AppDatabase.getInstance(context), musics).execute();
@@ -121,52 +136,84 @@ public class Music {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                // Return the error message.
-                listener.onDownloadError(errorResponse.toString());
+                if (errorResponse != null) {
+                    // Return the error message.
+                    listener.onDownloadError(errorResponse.toString());
+                }
             }
         });
     }
 
-    public static void get (int id, Context context, final OnMusicGetListener listener) {
-        CallApi.get(context, "/music/" + id, null, new JsonHttpResponseHandler() {
+    public static void get (final int id, final Context context, final OnMusicGetListener listener) {
+        final MusicDao mMusicDao = AppDatabase.getInstance(context).musicDao();
+
+
+        new AsyncTask<Void, Void, Void>() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
+            protected Void doInBackground(Void... voids) {
                 try {
-                    Music music = new Music(
-                        response.getString("id"),
-                        response.getString("musicId"),
-                        response.getString("url"),
-                        response.getString("artist"),
-                        response.getString("title"),
-                        response.getString("fullTitle"));
+                    Music music = mMusicDao.findByMusicId(id);
+                    if(music != null && music.getData() != null && music.getData().length > 0) {
+                        listener.onDownloadComplete(music);
+                    } else {
+                        CallApi.get(context, "/music/" + id, null, new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                // If the response is JSONObject instead of expected JSONArray
+                                try {
+                                    Music music = new Music(
+                                            response.getString("id"),
+                                            response.getString("musicId"),
+                                            response.getString("url"),
+                                            response.getString("artist"),
+                                            response.getString("title"),
+                                            response.getString("fullTitle"));
 
-                    JSONArray jsonArray = response.getJSONObject("data").getJSONArray("data");
-                    int length = jsonArray.length();
-                    byte[] byteData = new byte[length];
+                                    JSONArray jsonArray = response.getJSONObject("data").getJSONArray("data");
+                                    int length = jsonArray.length();
+                                    byte[] byteData = new byte[length];
 
-                    // Parse JSONArray to array of byte.
-                    for(int i = 0; i < length; i++) {
-                        byteData[i] = (byte) ((jsonArray.getInt(i)) & 0xFF);
+                                    // Parse JSONArray to array of byte.
+                                    for(int i = 0; i < length; i++) {
+                                        byteData[i] = (byte) ((jsonArray.getInt(i)) & 0xFF);
+                                    }
+
+                                    music.setData(byteData);
+
+                                    // Save in db.
+                                    new MusicRepository.updateAsyncTask(AppDatabase.getInstance(context).musicDao())
+                                            .execute(music);
+
+                                    listener.onDownloadComplete(music);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                if (errorResponse != null) {
+                                    // Return the error message.
+                                    listener.onDownloadError(errorResponse.toString());
+                                }
+                            }
+
+
+                            @Override
+                            public boolean getUseSynchronousMode() {
+                                return false;
+                            }
+                        });
                     }
-
-                    music.setData(byteData);
-                    // TODO: Save loaded music in DB.
-
-                    listener.onDownloadComplete(music);
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                // Return the error message.
-                listener.onDownloadError(errorResponse.toString());
+                return null;
             }
-        });
+        }.execute();
     }
 
     /*** ACCESSOR ***/

@@ -19,10 +19,14 @@ public class PopulateMusicDbAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(final Void... params) {
-        mDao.deleteAll();
+        List<Music> existingMusic = mDao.getAllMusic();
+
         for (Music music: mMusics) {
-            mDao.insert(music);
+            if (!existingMusic.contains(music)) {
+                mDao.insert(music);
+            }
         }
+
         return null;
     }
 }

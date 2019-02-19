@@ -214,8 +214,14 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             volume.setMax(100);
             volume.setProgress(50);
 
-            this.loader.setVisibility(View.GONE);
-            this.play.setVisibility(View.VISIBLE);
+            // Use this Runnable for be able to modify the UI.
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loader.setVisibility(View.GONE);
+                    play.setVisibility(View.VISIBLE);
+                }
+            });
         } catch (IOException e) {
             Log.i("error", e.getMessage());
         }

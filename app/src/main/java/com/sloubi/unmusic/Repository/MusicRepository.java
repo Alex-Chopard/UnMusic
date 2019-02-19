@@ -23,21 +23,21 @@ public class MusicRepository {
         return this.mAllMusic;
     }
 
-    public void insert (Music music) {
-        new insertAsyncTask(this.mMusicDao).execute(music);
+    public void update (Music music) {
+        new updateAsyncTask (this.mMusicDao).execute(music);
     }
 
-    private static class insertAsyncTask extends AsyncTask<Music, Void, Void> {
+    public static class updateAsyncTask extends AsyncTask<Music, Void, Void> {
 
         private MusicDao mAsyncTaskDao;
 
-        insertAsyncTask(MusicDao dao) {
+        public updateAsyncTask(MusicDao dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
         protected Void doInBackground(final Music... params) {
-            mAsyncTaskDao.insert(params[0]);
+            mAsyncTaskDao.update(params[0]);
             return null;
         }
     }

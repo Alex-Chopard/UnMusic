@@ -73,9 +73,16 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
                 musics.add(musicMap);
             }
 
-            PlaylistAdapter adapter = new PlaylistAdapter(this.getBaseContext(), musics);
-            this.loader.setVisibility(View.GONE);
-            this.playlist.setAdapter(adapter);
+            final PlaylistAdapter adapter = new PlaylistAdapter(this.getBaseContext(), musics);
+
+            // Use this Runnable for be able to modify the UI.
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loader.setVisibility(View.GONE);
+                    playlist.setAdapter(adapter);
+                }
+            });
         }
     }
 
