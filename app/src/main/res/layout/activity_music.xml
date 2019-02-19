@@ -7,12 +7,6 @@
     android:gravity="bottom"
     android:padding="20dp">
 
-    <Button
-        android:id="@+id/btn_playlist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Playlist"/>
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/infozone"
@@ -26,15 +20,18 @@
             android:layout_height="270dp"
             android:padding="20dp" />
 
+
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/infozone"
             android:gravity="center"
+            android:visibility="gone"
             android:text="Title"
             android:textColor="@color/textPrimary" />
     </LinearLayout>
+
 
     <FrameLayout
         android:layout_width="100dp"
@@ -62,7 +59,6 @@
     </FrameLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/playzone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -87,7 +83,17 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:tint="@color/colorAccent"
+            android:visibility="gone"
             app:srcCompat="@android:drawable/ic_media_play" />
+
+        <com.wang.avi.AVLoadingIndicatorView
+            android:id="@+id/liv_loader"
+            android:layout_width="72dp"
+            android:layout_height="32dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            app:indicatorColor="@color/colorAccent"
+            app:indicatorName="BallClipRotateMultipleIndicator" />
 
         <ImageView
             android:id="@+id/iv_rigth"
@@ -101,7 +107,6 @@
     </LinearLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/playzone">

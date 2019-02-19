@@ -1,5 +1,6 @@
 package com.sloubi.unmusic.Activity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,11 +16,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.sloubi.unmusic.Interface.OnMusicGetListener;
 import com.sloubi.unmusic.Model.Music;
 import com.sloubi.unmusic.R;
 import com.sloubi.unmusic.Services.GestionAccelerometre;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -39,6 +42,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private Button btn_timming;
     private Button btn_volume;
     private ImageView play;
+    private AVLoadingIndicatorView loader;
+    private TextView title;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,19 +56,24 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         Music.get(this.id, this, this);
 
         this.play = findViewById(R.id.iv_play);
-        progress = findViewById(R.id.sb_avancement);
-        volume = findViewById(R.id.sb_volume);
-        btn_timming = findViewById(R.id.btn_timming);
-        btn_volume = findViewById(R.id.btn_volume);
-        Button btn_playlist = findViewById(R.id.btn_playlist);
+        this.progress = findViewById(R.id.sb_avancement);
+        this.volume = findViewById(R.id.sb_volume);
+        this.btn_timming = findViewById(R.id.btn_timming);
+        this.btn_volume = findViewById(R.id.btn_volume);
+        this.loader = findViewById(R.id.liv_loader);
+        this.title = findViewById(R.id.tv_title);
 
 
-        play.setOnClickListener(this);
-        progress.setOnSeekBarChangeListener(this);
-        volume.setOnSeekBarChangeListener(this);
-        btn_timming.setOnClickListener(this);
-        btn_volume.setOnClickListener(this);
-        btn_playlist.setOnClickListener(this);
+        this.play.setOnClickListener(this);
+        this.progress.setOnSeekBarChangeListener(this);
+        this.volume.setOnSeekBarChangeListener(this);
+        this.btn_timming.setOnClickListener(this);
+        this.btn_volume.setOnClickListener(this);
+
+        this.loader.setVisibility(View.VISIBLE);
+        this.play.setVisibility(View.GONE);
+
+        this.title.setText("");
 
         /* piloteAccelero = new GestionAccelerometre(this.getBaseContext(), mediaPlayer);
         //Make sure you update Seekbar on UI thread.
@@ -124,10 +134,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btn_volume:
                 gestionAccelero(String.valueOf(R.id.sb_volume), false);
                 break;
-            case R.id.btn_playlist:
-                Intent intent = new Intent(this, PlayListActivity.class);
-                startActivity(intent);
-                break;
         }
     }
 
@@ -185,6 +191,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             mediaPlayer.stop();
         }
 
+        this.title.setText(music.getFullTitle());
+
         try {
             byte[] byteMusic = music.getData();
             File fileMusic = File.createTempFile("music", null, this.getCacheDir());
@@ -197,14 +205,17 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setDataSource(this, Uri.fromFile(fileMusic));
-
             mediaPlayer.prepare();
 
-            mediaPlayer.setVolume(0.4f, 0.4f);
+            mediaPlayer.setVolume(0.5f, 0.5f);
             progress.setMax(mediaPlayer.getDuration() / 1000);
+            progress.setProgress(0);
 
             volume.setMax(100);
-            volume.setProgress(40);
+            volume.setProgress(50);
+
+            this.loader.setVisibility(View.GONE);
+            this.play.setVisibility(View.VISIBLE);
         } catch (IOException e) {
             Log.i("error", e.getMessage());
         }
