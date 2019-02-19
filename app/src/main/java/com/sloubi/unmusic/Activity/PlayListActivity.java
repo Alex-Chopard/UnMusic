@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import java.util.List;
 public class PlayListActivity extends AppCompatActivity implements OnMusicListDownloadListener, AdapterView.OnItemClickListener {
 
     private ListView playlist;
+    private LinearLayout loader;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,8 +30,12 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
         setContentView(R.layout.activity_playlist);
 
         playlist = findViewById(R.id.lv_playlist);
+        loader = findViewById(R.id.ll_loader);
+
         playlist.setOnItemClickListener(this);
 
+        // Display loader.
+        this.loader.setVisibility(View.VISIBLE);
         // Get all music.
         Music.list(this, this);
     }
@@ -58,7 +64,8 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
         }
 
         PlaylistAdapter adapter = new PlaylistAdapter(this.getBaseContext(), musics);
-        playlist.setAdapter(adapter);
+        this.loader.setVisibility(View.GONE);
+        this.playlist.setAdapter(adapter);
     }
 
     @Override
