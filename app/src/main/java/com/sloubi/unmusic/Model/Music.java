@@ -7,8 +7,11 @@ import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.sloubi.unmusic.AppDatabase;
+import com.sloubi.unmusic.Async.PopulateMusicDbAsync;
 import com.sloubi.unmusic.CallApi;
 import com.sloubi.unmusic.Interface.OnMusicGetListener;
 import com.sloubi.unmusic.Interface.OnMusicListDownloadListener;
@@ -68,7 +71,7 @@ public class Music {
     }
 
     public static void list(final Context context, final OnMusicListDownloadListener listener) {
-
+        // AsyncTask for call the DB.
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -105,9 +108,12 @@ public class Music {
                         musics.add(music);
                     }
 
-                    // TODO: Save loaded music in DB.
-
                     listener.onDownloadComplete(musics);
+                    Toast.makeText(context, "Playlist synchronized with server", Toast.LENGTH_SHORT).show();
+
+                    // Insert music in DB.
+                    new PopulateMusicDbAsync(AppDatabase.getInstance(context), musics).execute();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

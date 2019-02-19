@@ -26,7 +26,6 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
 
     private ListView playlist;
     private LinearLayout loader;
-    private AppDatabase db;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,7 +39,7 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
 
 
         //Init RoomDatabase
-        this.db = AppDatabase.getInstance(this);
+        AppDatabase.getInstance(this);
 
         // Display loader.
         this.loader.setVisibility(View.VISIBLE);
@@ -62,25 +61,22 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
 
     @Override
     public void onDownloadComplete(List<Music> data) {
-        List<HashMap<String, String>> musics = new ArrayList<>();
-        List<Music> musicList = new ArrayList<>();
+        // Do nothing if the list is empty
+        if (!data.isEmpty()) {
+            List<HashMap<String, String>> musics = new ArrayList<>();
 
-        for (Music music: data) {
-            HashMap<String, String> musicMap = new HashMap<>();
-            musicMap.put("id", music.getId());
-            musicMap.put("fullTitle", music.getFullTitle());
+            for (Music music: data) {
+                HashMap<String, String> musicMap = new HashMap<>();
+                musicMap.put("id", music.getId());
+                musicMap.put("fullTitle", music.getFullTitle());
 
-            musics.add(musicMap);
-            musicList.add(music);
+                musics.add(musicMap);
+            }
+
+            PlaylistAdapter adapter = new PlaylistAdapter(this.getBaseContext(), musics);
+            this.loader.setVisibility(View.GONE);
+            this.playlist.setAdapter(adapter);
         }
-
-
-        // Insert music in DB.
-        new PopulateMusicDbAsync(db, musicList).execute();
-
-        PlaylistAdapter adapter = new PlaylistAdapter(this.getBaseContext(), musics);
-        this.loader.setVisibility(View.GONE);
-        this.playlist.setAdapter(adapter);
     }
 
     @Override
