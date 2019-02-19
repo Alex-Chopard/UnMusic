@@ -23,6 +23,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,8 +62,8 @@ public class Music {
     @ColumnInfo(name = "fullTitle")
     private String fullTitle;
 
-    @ColumnInfo(name = "data")
-    private byte[] data;
+    @ColumnInfo(name = "filePath")
+    private String filePath;
 
     public Music(String id, String musicId, String url, String artist, String title, String fullTitle) {
         this.id = id;
@@ -153,7 +155,7 @@ public class Music {
             protected Void doInBackground(Void... voids) {
                 try {
                     Music music = mMusicDao.findByMusicId(id);
-                    if(music != null && music.getData() != null && music.getData().length > 0) {
+                    if(music != null && music.getFilePath() != null && music.getFilePath().length() > 0) {
                         listener.onDownloadComplete(music);
                     } else {
                         CallApi.get(context, "/music/" + id, null, new JsonHttpResponseHandler() {
@@ -178,7 +180,15 @@ public class Music {
                                         byteData[i] = (byte) ((jsonArray.getInt(i)) & 0xFF);
                                     }
 
-                                    music.setData(byteData);
+                                    String filename = music.getFullTitle() + ".mp3";
+
+                                    FileOutputStream outputStream;
+
+                                    outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+                                    outputStream.write(byteData);
+                                    outputStream.close();
+
+                                    music.setFilePath(filename);
 
                                     // Save in db.
                                     new MusicRepository.updateAsyncTask(AppDatabase.getInstance(context).musicDao())
@@ -258,19 +268,19 @@ public class Music {
         this.fullTitle = fullTitle;
     }
 
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 }

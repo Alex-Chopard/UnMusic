@@ -194,16 +194,9 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         this.title.setText(music.getFullTitle());
 
         try {
-            byte[] byteMusic = music.getData();
-            File fileMusic = File.createTempFile("music", null, this.getCacheDir());
-            FileOutputStream fileOutputStream = new FileOutputStream(fileMusic);
+            File file = new File(this.getFilesDir(), music.getFilePath());
 
-            BufferedOutputStream buffer = new BufferedOutputStream(fileOutputStream);
-
-            buffer.write(byteMusic);
-            buffer.close();
-
-            mediaPlayer.setDataSource(this, Uri.fromFile(fileMusic));
+            mediaPlayer.setDataSource(this, Uri.fromFile(file));
             mediaPlayer.prepare();
 
             mediaPlayer.setVolume(0.5f, 0.5f);
