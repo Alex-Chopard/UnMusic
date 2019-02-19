@@ -1,31 +1,61 @@
 package com.sloubi.unmusic.Model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
-import android.util.Log;
+import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sloubi.unmusic.CallApi;
 import com.sloubi.unmusic.Interface.OnMusicGetListener;
 import com.sloubi.unmusic.Interface.OnMusicListDownloadListener;
+import com.sloubi.unmusic.Repository.MusicRepository;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
+@Entity(
+        tableName = "music",
+        indices = { @Index(value = { "musicId" }, unique = true) }
+)
 public class Music {
+
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "id")
     private String id;
+
+    @NonNull
+    @ColumnInfo(name = "musicId")
     private String musicId;
+
+    @NonNull
+    @ColumnInfo(name = "url")
     private String url;
+
+    @NonNull
+    @ColumnInfo(name = "artist")
     private String artist;
+
+    @NonNull
+    @ColumnInfo(name = "title")
     private String title;
+
+    @NonNull
+    @ColumnInfo(name = "fullTitle")
     private String fullTitle;
+
+    @ColumnInfo(name = "data")
     private byte[] data;
 
     public Music(String id, String musicId, String url, String artist, String title, String fullTitle) {
@@ -37,8 +67,21 @@ public class Music {
         this.fullTitle = fullTitle;
     }
 
-    public static void list(Context context, final OnMusicListDownloadListener listener) {
-        // TODO: First load stored musics.
+    public static void list(final Context context, final OnMusicListDownloadListener listener) {
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                // Load stored music.
+                MusicRepository repository = new MusicRepository(context);
+                List<Music> musics = repository.getAllMusics();
+
+                // Return stored music
+                listener.onDownloadComplete(musics);
+                return null;
+            }
+        }.execute();
+
         CallApi.get(context, "/music", null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

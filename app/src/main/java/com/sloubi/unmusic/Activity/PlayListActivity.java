@@ -11,6 +11,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.sloubi.unmusic.Adapter.PlaylistAdapter;
+import com.sloubi.unmusic.AppDatabase;
+import com.sloubi.unmusic.Async.PopulateMusicDbAsync;
+import com.sloubi.unmusic.Interface.MusicDao;
 import com.sloubi.unmusic.Interface.OnMusicListDownloadListener;
 import com.sloubi.unmusic.Model.Music;
 import com.sloubi.unmusic.R;
@@ -23,6 +26,7 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
 
     private ListView playlist;
     private LinearLayout loader;
+    private AppDatabase db;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,10 +38,15 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
 
         playlist.setOnItemClickListener(this);
 
+
+        //Init RoomDatabase
+        this.db = AppDatabase.getInstance(this);
+
         // Display loader.
         this.loader.setVisibility(View.VISIBLE);
         // Get all music.
         Music.list(this, this);
+
     }
 
 
@@ -54,6 +63,7 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
     @Override
     public void onDownloadComplete(List<Music> data) {
         List<HashMap<String, String>> musics = new ArrayList<>();
+        List<Music> musicList = new ArrayList<>();
 
         for (Music music: data) {
             HashMap<String, String> musicMap = new HashMap<>();
@@ -61,7 +71,12 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
             musicMap.put("fullTitle", music.getFullTitle());
 
             musics.add(musicMap);
+            musicList.add(music);
         }
+
+
+        // Insert music in DB.
+        new PopulateMusicDbAsync(db, musicList).execute();
 
         PlaylistAdapter adapter = new PlaylistAdapter(this.getBaseContext(), musics);
         this.loader.setVisibility(View.GONE);
