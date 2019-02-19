@@ -26,7 +26,7 @@ public class Music {
     private String artist;
     private String title;
     private String fullTitle;
-    private String data;
+    private byte[] data;
 
     public Music(String id, String musicId, String url, String artist, String title, String fullTitle) {
         this.id = id;
@@ -91,17 +91,17 @@ public class Music {
                         response.getString("artist"),
                         response.getString("title"),
                         response.getString("fullTitle"));
-                    Log.i("5555555555555555", "lksjdfuh");
-                    StringBuilder base64 = new StringBuilder();
-                    JSONArray jsonArray = response.getJSONObject("data").getJSONArray("data");
 
-                    for(int i = 0; i < jsonArray.length(); i++) {
-                        int character = (int) jsonArray.get(i);
-                        base64.append((char) character);
+                    JSONArray jsonArray = response.getJSONObject("data").getJSONArray("data");
+                    int length = jsonArray.length();
+                    byte[] byteData = new byte[length];
+
+                    // Parse JSONArray to array of byte.
+                    for(int i = 0; i < length; i++) {
+                        byteData[i] = (byte) ((jsonArray.getInt(i)) & 0xFF);
                     }
 
-                    music.setData(base64.toString());
-                    Log.i("0000000000000000000000", "" + music.getData().length());
+                    music.setData(byteData);
                     // TODO: Save loaded music in DB.
 
                     listener.onDownloadComplete(music);
@@ -162,11 +162,11 @@ public class Music {
         this.fullTitle = fullTitle;
     }
 
-    public String getData() {
+    public byte[] getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(byte[] data) {
         this.data = data;
     }
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -24,6 +25,9 @@ import com.sloubi.unmusic.R;
 import com.sloubi.unmusic.Services.GestionAccelerometre;
 import com.sloubi.unmusic.Services.LocationService;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class MusicActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, OnMusicGetListener {
@@ -185,9 +189,17 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         }
 
         try {
-            String url = new String(Base64.decode(music.getData(), 0));
+            byte[] byteMusic = music.getData();
+            File fileMusic = File.createTempFile("music", null, this.getCacheDir());
+            FileOutputStream fileOutputStream = new FileOutputStream(fileMusic);
+
+            BufferedOutputStream buffer = new BufferedOutputStream(fileOutputStream);
+
+            buffer.write(byteMusic);
+            buffer.close();
+
             mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(url);
+            mediaPlayer.setDataSource(this, Uri.fromFile(fileMusic));
 
             mediaPlayer.prepare();
 
@@ -196,8 +208,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
             volume.setMax(100);
             volume.setProgress(40);
-
-            Log.i("1111111111", "ok ?");
         } catch (IOException e) {
             Log.i("error", e.getMessage());
         }
