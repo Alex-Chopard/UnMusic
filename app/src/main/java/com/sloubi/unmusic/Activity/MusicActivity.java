@@ -57,7 +57,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         this.fullTitle = getIntent().getStringExtra("fullTitle");
         this.fileUrl = getIntent().getStringExtra("fileUrl");
 
-        if (this.fileUrl.length() > 0) {
+        // If the music is already loaded.
+        if (this.fileUrl != null && this.fileUrl.length() > 0) {
             this.initMediaPlayer(this.fileUrl);
         } else {
             // Start to load music data.
@@ -210,24 +211,31 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    public void initMediaPlayer (String urlFile) {
-        try {
-            File file = new File(this.getFilesDir(), urlFile);
+    public void initMediaPlayer (final String urlFile) {
+        final Context context = this;
 
-            this.mediaPlayer.setDataSource(this, Uri.fromFile(file));
-            this.mediaPlayer.prepare();
+        // Be sure to run on UI Thread.
+        runOnUiThread (new Thread(new Runnable() {
+            public void run() {
+                try {
+                    File file = new File(getFilesDir(), urlFile);
 
-            this.mediaPlayer.setVolume(0.5f, 0.5f);
-            this.progress.setMax(mediaPlayer.getDuration() / 1000);
-            this.progress.setProgress(0);
+                    mediaPlayer.setDataSource(context, Uri.fromFile(file));
+                    mediaPlayer.prepare();
 
-            this.volume.setMax(100);
-            this.volume.setProgress(50);
+                    mediaPlayer.setVolume(0.5f, 0.5f);
+                    progress.setMax(mediaPlayer.getDuration() / 1000);
+                    progress.setProgress(0);
 
-            this.loader.setVisibility(View.GONE);
-            this.play.setVisibility(View.VISIBLE);
-        } catch (IOException e) {
-            Log.i("error", e.getMessage());
-        }
+                    volume.setMax(100);
+                    volume.setProgress(50);
+
+                    loader.setVisibility(View.GONE);
+                    play.setVisibility(View.VISIBLE);
+                } catch (IOException e) {
+                    Log.i("error", e.getMessage());
+                }
+            }
+        }));
     }
 }

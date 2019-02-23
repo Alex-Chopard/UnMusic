@@ -27,6 +27,8 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
     private ListView playlist;
     private LinearLayout loader;
 
+    private List<Music> mMusics;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,21 +53,31 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         int vId = view.getId();
 
-        Music music = (Music) parent.getItemAtPosition(position);
+        Music music = null;
 
-        // Start intent for play an music.
-        Intent intent = new Intent(this, MusicActivity.class);
-        intent.putExtra("id", music.getId());
-        intent.putExtra("fullTitle", music.getFullTitle());
-        intent.putExtra("fileUrl", music.getFullTitle());
+        for (Music m: this.mMusics) {
+            if (m.getId() == String.valueOf(vId)) {
+                music = m;
+            }
+        }
 
-        startActivity(intent);
+        if (music != null) {
+            // Start intent for play an music.
+            Intent intent = new Intent(this, MusicActivity.class);
+            intent.putExtra("id", Integer.valueOf(music.getId()));
+            intent.putExtra("fullTitle", music.getFullTitle());
+            intent.putExtra("fileUrl", music.getFilePath());
+
+            startActivity(intent);
+        }
     }
 
     @Override
     public void onDownloadComplete(List<Music> data) {
         // Do nothing if the list is empty
         if (!data.isEmpty()) {
+            this.mMusics = data;
+
             List<HashMap<String, String>> musics = new ArrayList<>();
 
             for (Music music: data) {
