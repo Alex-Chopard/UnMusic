@@ -8,3 +8,4 @@ public interface OnMusicListDownloadListener {
     void onDownloadComplete(List<Music> musics);
     void onDownloadError(String error);
 }
+    
