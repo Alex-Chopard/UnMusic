@@ -37,7 +37,6 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
 
         playlist.setOnItemClickListener(this);
 
-
         //Init RoomDatabase
         AppDatabase.getInstance(this);
 
@@ -45,7 +44,6 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
         this.loader.setVisibility(View.VISIBLE);
         // Get all music.
         Music.list(this, this);
-
     }
 
 
@@ -53,9 +51,14 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         int vId = view.getId();
 
+        Music music = (Music) parent.getItemAtPosition(position);
+
         // Start intent for play an music.
         Intent intent = new Intent(this, MusicActivity.class);
-        intent.putExtra("id", vId);
+        intent.putExtra("id", music.getId());
+        intent.putExtra("fullTitle", music.getFullTitle());
+        intent.putExtra("fileUrl", music.getFullTitle());
+
         startActivity(intent);
     }
 

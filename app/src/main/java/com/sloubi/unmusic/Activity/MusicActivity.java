@@ -32,6 +32,8 @@ import java.io.IOException;
 public class MusicActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, OnMusicGetListener {
 
     private int id;
+    private String fullTitle;
+    private String fileUrl;
 
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private Handler mHandler = new Handler();
@@ -52,8 +54,15 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         // Get the music id.
         this.id = getIntent().getIntExtra("id", -1);
-        // Start to load music data.
-        Music.get(this.id, this, this);
+        this.fullTitle = getIntent().getStringExtra("fullTitle");
+        this.fileUrl = getIntent().getStringExtra("fileUrl");
+
+        if (this.fileUrl.length() > 0) {
+            this.initMediaPlayer(this.fileUrl);
+        } else {
+            // Start to load music data.
+            Music.get(this.id, this, this);
+        }
 
         this.play = findViewById(R.id.iv_play);
         this.progress = findViewById(R.id.sb_avancement);
@@ -73,7 +82,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         this.loader.setVisibility(View.VISIBLE);
         this.play.setVisibility(View.GONE);
 
-        this.title.setText("");
+        this.title.setText(this.fullTitle);
 
         /* piloteAccelero = new GestionAccelerometre(this.getBaseContext(), mediaPlayer);
         //Make sure you update Seekbar on UI thread.
@@ -193,34 +202,32 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         this.title.setText(music.getFullTitle());
 
-        try {
-            File file = new File(this.getFilesDir(), music.getFilePath());
-
-            mediaPlayer.setDataSource(this, Uri.fromFile(file));
-            mediaPlayer.prepare();
-
-            mediaPlayer.setVolume(0.5f, 0.5f);
-            progress.setMax(mediaPlayer.getDuration() / 1000);
-            progress.setProgress(0);
-
-            volume.setMax(100);
-            volume.setProgress(50);
-
-            // Use this Runnable for be able to modify the UI.
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    loader.setVisibility(View.GONE);
-                    play.setVisibility(View.VISIBLE);
-                }
-            });
-        } catch (IOException e) {
-            Log.i("error", e.getMessage());
-        }
+        this.initMediaPlayer(music.getFilePath());
     }
 
     @Override
     public void onDownloadError(String error) {
 
+    }
+
+    public void initMediaPlayer (String urlFile) {
+        try {
+            File file = new File(this.getFilesDir(), urlFile);
+
+            this.mediaPlayer.setDataSource(this, Uri.fromFile(file));
+            this.mediaPlayer.prepare();
+
+            this.mediaPlayer.setVolume(0.5f, 0.5f);
+            this.progress.setMax(mediaPlayer.getDuration() / 1000);
+            this.progress.setProgress(0);
+
+            this.volume.setMax(100);
+            this.volume.setProgress(50);
+
+            this.loader.setVisibility(View.GONE);
+            this.play.setVisibility(View.VISIBLE);
+        } catch (IOException e) {
+            Log.i("error", e.getMessage());
+        }
     }
 }
