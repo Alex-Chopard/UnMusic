@@ -8,8 +8,6 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.ResponseHandlerInterface;
 import com.loopj.android.http.SyncHttpClient;
 
-import cz.msebera.android.httpclient.client.ResponseHandler;
-
 public class CallApi {
     private static AsyncHttpClient aClient = new AsyncHttpClient();
     private static SyncHttpClient sClient = new SyncHttpClient();

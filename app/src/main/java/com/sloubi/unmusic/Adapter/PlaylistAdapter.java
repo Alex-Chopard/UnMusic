@@ -21,8 +21,8 @@ public class PlaylistAdapter extends ArrayAdapter<Music> {
     public PlaylistAdapter(Context context, List<Music> musics){
         super(context, R.layout.activity_playlist, musics);
 
-        this.mContext = context;
-        this.mMusics = musics;
+        mContext = context;
+        mMusics = musics;
     }
 
     @NonNull
@@ -32,7 +32,7 @@ public class PlaylistAdapter extends ArrayAdapter<Music> {
         View rowView = inflater.inflate(R.layout.row_playlist, parent, false);
         TextView musicTitle = rowView.findViewById(R.id.tv_music_title);
 
-        Music music = this.mMusics.get(position);
+        Music music = mMusics.get(position);
 
         rowView.setId(Integer.parseInt(music.getId()));
         musicTitle.setText(music.getFullTitle());

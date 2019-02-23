@@ -13,8 +13,8 @@ public class PopulateMusicDbAsync extends AsyncTask<Void, Void, Void> {
     private final List<Music> mMusics;
 
     public PopulateMusicDbAsync(AppDatabase db, List<Music> musics) {
-        this.mDao = db.musicDao();
-        this.mMusics = musics;
+        mDao = db.musicDao();
+        mMusics = musics;
     }
 
     @Override

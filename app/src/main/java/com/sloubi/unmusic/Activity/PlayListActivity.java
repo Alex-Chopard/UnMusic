@@ -12,21 +12,16 @@ import android.widget.Toast;
 
 import com.sloubi.unmusic.Adapter.PlaylistAdapter;
 import com.sloubi.unmusic.AppDatabase;
-import com.sloubi.unmusic.Async.PopulateMusicDbAsync;
-import com.sloubi.unmusic.Interface.MusicDao;
 import com.sloubi.unmusic.Interface.OnMusicListDownloadListener;
 import com.sloubi.unmusic.Model.Music;
 import com.sloubi.unmusic.R;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class PlayListActivity extends AppCompatActivity implements OnMusicListDownloadListener, AdapterView.OnItemClickListener {
 
-    private ListView playlist;
-    private LinearLayout loader;
-
+    private ListView mPlaylist;
+    private LinearLayout mLoader;
     private List<Music> mMusics;
 
     @Override
@@ -34,16 +29,16 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
 
-        playlist = findViewById(R.id.lv_playlist);
-        loader = findViewById(R.id.ll_loader);
+        mPlaylist = findViewById(R.id.lv_playlist);
+        mLoader = findViewById(R.id.ll_loader);
 
-        playlist.setOnItemClickListener(this);
+        mPlaylist.setOnItemClickListener(this);
+        // Display loader.
+        mLoader.setVisibility(View.VISIBLE);
 
         //Init RoomDatabase
         AppDatabase.getInstance(this);
 
-        // Display loader.
-        this.loader.setVisibility(View.VISIBLE);
         // Get all music.
         Music.list(this, this);
     }
@@ -52,10 +47,9 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         int vId = view.getId();
-
         Music music = null;
 
-        for (Music m: this.mMusics) {
+        for (Music m: mMusics) {
             if (m.getId() == String.valueOf(vId)) {
                 music = m;
             }
@@ -76,7 +70,7 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
     public void onDownloadComplete(List<Music> data) {
         // Do nothing if the list is empty
         if (!data.isEmpty()) {
-            this.mMusics = data;
+            mMusics = data;
 
             final PlaylistAdapter adapter = new PlaylistAdapter(this, this.mMusics);
 
@@ -84,8 +78,8 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    loader.setVisibility(View.GONE);
-                    playlist.setAdapter(adapter);
+                    mLoader.setVisibility(View.GONE);
+                    mPlaylist.setAdapter(adapter);
                 }
             });
         }
