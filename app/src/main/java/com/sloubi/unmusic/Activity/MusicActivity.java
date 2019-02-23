@@ -1,6 +1,5 @@
 package com.sloubi.unmusic.Activity;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,16 +23,10 @@ import com.sloubi.unmusic.R;
 import com.sloubi.unmusic.Services.GestionAccelerometre;
 import com.wang.avi.AVLoadingIndicatorView;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class MusicActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, OnMusicGetListener {
-
-    private int id;
-    private String fullTitle;
-    private String fileUrl;
 
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private Handler mHandler = new Handler();
@@ -53,18 +46,11 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_music);
 
         // Get the music id.
-        this.id = getIntent().getIntExtra("id", -1);
-        this.fullTitle = getIntent().getStringExtra("fullTitle");
-        this.fileUrl = getIntent().getStringExtra("fileUrl");
+        int id = getIntent().getIntExtra("id", -1);
+        String fullTitle = getIntent().getStringExtra("fullTitle");
+        String fileUrl = getIntent().getStringExtra("fileUrl");
 
-        // If the music is already loaded.
-        if (this.fileUrl != null && this.fileUrl.length() > 0) {
-            this.initMediaPlayer(this.fileUrl);
-        } else {
-            // Start to load music data.
-            Music.get(this.id, this, this);
-        }
-
+        // Get Views
         this.play = findViewById(R.id.iv_play);
         this.progress = findViewById(R.id.sb_avancement);
         this.volume = findViewById(R.id.sb_volume);
@@ -73,7 +59,15 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         this.loader = findViewById(R.id.liv_loader);
         this.title = findViewById(R.id.tv_title);
 
+        // If the music is already loaded.
+        if (fileUrl != null && fileUrl.length() > 0) {
+            this.initMediaPlayer(fileUrl);
+        } else {
+            // Start to load music data.
+            Music.get(id, this, this);
+        }
 
+        // Set listeners.
         this.play.setOnClickListener(this);
         this.progress.setOnSeekBarChangeListener(this);
         this.volume.setOnSeekBarChangeListener(this);
@@ -83,21 +77,11 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         this.loader.setVisibility(View.VISIBLE);
         this.play.setVisibility(View.GONE);
 
-        this.title.setText(this.fullTitle);
+        this.title.setText(fullTitle);
+
+        updateSeekBarProgress();
 
         /* piloteAccelero = new GestionAccelerometre(this.getBaseContext(), mediaPlayer);
-        //Make sure you update Seekbar on UI thread.
-        MusicActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mediaPlayer != null) {
-                    int mCurrentPosition = mediaPlayer.getCurrentPosition() / 1000;
-                    progress.setProgress(mCurrentPosition);
-                }
-                mHandler.postDelayed(this, 1000);
-            }
-        });
-
 
         // Start listening the broadcaster.
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
@@ -124,8 +108,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-
         int vId = v.getId();
+
         switch (vId) {
             case R.id.iv_play:
                 ImageView play = findViewById(R.id.iv_play);
@@ -235,6 +219,27 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                     play.setVisibility(View.VISIBLE);
                 } catch (IOException e) {
                     Log.i("error", e.getMessage());
+                }
+            }
+        });
+    }
+
+    public void updateSeekBarProgress () {
+        //Make sure you update Seekbar on UI thread.
+        MusicActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (mHandler != null) {
+                        if (mediaPlayer != null) {
+                            int mCurrentPosition = mediaPlayer.getCurrentPosition() / 1000;
+                            progress.setProgress(mCurrentPosition);
+                        }
+
+                        mHandler.postDelayed(this, 1000);
+                    }
+                } catch (Exception ex) {
+                    Log.i("ERROR", "error - " + ex.getLocalizedMessage());
                 }
             }
         });
