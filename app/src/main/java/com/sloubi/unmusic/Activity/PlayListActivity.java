@@ -78,17 +78,7 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
         if (!data.isEmpty()) {
             this.mMusics = data;
 
-            List<HashMap<String, String>> musics = new ArrayList<>();
-
-            for (Music music: data) {
-                HashMap<String, String> musicMap = new HashMap<>();
-                musicMap.put("id", music.getId());
-                musicMap.put("fullTitle", music.getFullTitle());
-
-                musics.add(musicMap);
-            }
-
-            final PlaylistAdapter adapter = new PlaylistAdapter(this.getBaseContext(), musics);
+            final PlaylistAdapter adapter = new PlaylistAdapter(this, this.mMusics);
 
             // Use this Runnable for be able to modify the UI.
             runOnUiThread(new Runnable() {

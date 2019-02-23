@@ -1,48 +1,41 @@
 package com.sloubi.unmusic.Adapter;
 
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.sloubi.unmusic.Activity.MusicActivity;
+import com.sloubi.unmusic.Model.Music;
 import com.sloubi.unmusic.R;
 
-import java.util.HashMap;
 import java.util.List;
 
-public class PlaylistAdapter extends ArrayAdapter<HashMap<String, String>> {
+public class PlaylistAdapter extends ArrayAdapter<Music> {
 
-    private List<HashMap<String, String>> musics;
-    private Context context;
+    private List<Music> mMusics;
+    private Context mContext;
 
-    public PlaylistAdapter(Context context, List<HashMap<String, String>> musics){
+    public PlaylistAdapter(Context context, List<Music> musics){
         super(context, R.layout.activity_playlist, musics);
 
-        this.context = context;
-        this.musics = musics;
+        this.mContext = context;
+        this.mMusics = musics;
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.row_playlist, parent, false);
-
-        HashMap<String, String> music = this.musics.get(position);
-
-        rowView.setId(Integer.parseInt(music.get("id")));
-
         TextView musicTitle = rowView.findViewById(R.id.tv_music_title);
-        musicTitle.setText(music.get("fullTitle"));
+
+        Music music = this.mMusics.get(position);
+
+        rowView.setId(Integer.parseInt(music.getId()));
+        musicTitle.setText(music.getFullTitle());
 
         return rowView;
     }

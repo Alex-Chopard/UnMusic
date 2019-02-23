@@ -215,7 +215,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         final Context context = this;
 
         // Be sure to run on UI Thread.
-        runOnUiThread (new Thread(new Runnable() {
+        runOnUiThread(new Runnable() {
+            @Override
             public void run() {
                 try {
                     File file = new File(getFilesDir(), urlFile);
@@ -236,6 +237,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                     Log.i("error", e.getMessage());
                 }
             }
-        }));
+        });
     }
 }
