@@ -144,8 +144,8 @@ public class SensorService extends Service implements SensorEventListener {
         float progressX = event.values[0];
         float progressY = event.values[1];
 
-        int valueForTime = (50 - (int) Math.floor(progressX * 5.0));
-        int valueForVolume = (50 - (int) Math.floor(progressY * 5.0));
+        int valueForTime = - (int) Math.floor(progressX) - 1;
+        int valueForVolume = - (int) Math.floor(progressY) - 1;
 
         // Post the event
         EventBus.getDefault().post(new AccelerometerSensorEvent(valueForTime, valueForVolume));

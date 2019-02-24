@@ -244,8 +244,10 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         Log.i("e","[:timeController]" + value * this.progress.getMax() / 100);
 
         try {
-            this.mediaPlayer.seekTo(value * 1000);
-            this.progress.setProgress(value * this.progress.getMax() / 100);
+            int newProgress = this.mediaPlayer.getCurrentPosition() + value * 1000;
+
+            this.mediaPlayer.seekTo(newProgress);
+            this.progress.setProgress(newProgress / 1000);
         } catch (Exception ex) {
             Log.i("ERROR", "error - " + ex.getLocalizedMessage());
         }
@@ -254,10 +256,10 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private void manageVolume(int value) {
         Log.i("e", "[:volumeController]" + value);
         try {
-            float volume = value / 1000.0f;
+            int newVolume = this.volume.getProgress() + value;
 
-            this.mediaPlayer.setVolume(volume, volume);
-            this.volume.setProgress(value);
+            this.mediaPlayer.setVolume(newVolume / 100f, newVolume / 100f);
+            this.volume.setProgress(newVolume);
         } catch (Exception ex) {
             Log.i("ERROR", "error - " + ex.getLocalizedMessage());
         }
