@@ -3,18 +3,23 @@ package com.sloubi.unmusic.Services;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.sloubi.unmusic.EventBus.AccelerometerSensorEvent;
 import com.sloubi.unmusic.EventBus.NewLocationEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
 // https://stackoverflow.com/a/8830135
-public class LocationService extends Service {
+public class SensorService extends Service implements SensorEventListener {
     private static final String TAG = "[LocationService]";
     private static final int LOCATION_INTERVAL = 1000;
     private static final float LOCATION_DISTANCE = 0;
@@ -74,7 +79,15 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         Log.i(TAG, "[:onCreate]");
-        initializeLocationManager();
+
+        Context context = getApplicationContext();
+
+        /** Location **/
+
+        // Init LocationManager
+        if (mLocationManager == null) {
+            mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        }
 
         try {
             mLocationManager.requestLocationUpdates(
@@ -95,6 +108,17 @@ public class LocationService extends Service {
         } catch (IllegalArgumentException ex) {
             Log.d(TAG, "gps provider does not exist " + ex.getMessage());
         }
+
+        /** End Location **/
+
+
+        /** Accelerometer **/
+
+        SensorManager sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
+        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+        /** End Accelerometer **/
     }
 
     @Override
@@ -113,10 +137,22 @@ public class LocationService extends Service {
         }
     }
 
-    private void initializeLocationManager() {
-        Log.i(TAG, "[:initializeLocationManager]");
-        if (mLocationManager == null) {
-            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        }
+    /*** SENSOR EVENTS ***/
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        float progressX = event.values[0];
+        float progressY = event.values[1];
+
+        int valueForTime = (50 - (int) Math.floor(progressX * 5.0));
+        int valueForVolume = (50 - (int) Math.floor(progressY * 5.0));
+
+        // Post the event
+        EventBus.getDefault().post(new AccelerometerSensorEvent(valueForTime, valueForVolume));
     }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) { }
+
+    /*** END SENSOR EVENTS ***/
 }

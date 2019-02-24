@@ -2,7 +2,6 @@ package com.sloubi.unmusic.Activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.location.Location;
 import android.media.MediaPlayer;
@@ -18,12 +17,12 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.sloubi.unmusic.EventBus.AccelerometerSensorEvent;
 import com.sloubi.unmusic.EventBus.NewLocationEvent;
 import com.sloubi.unmusic.Interface.OnMusicGetListener;
 import com.sloubi.unmusic.Model.Music;
 import com.sloubi.unmusic.R;
-import com.sloubi.unmusic.Services.GestionAccelerometre;
-import com.sloubi.unmusic.Services.LocationService;
+import com.sloubi.unmusic.Services.SensorService;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,16 +33,19 @@ import java.io.File;
 import java.io.IOException;
 
 public class MusicActivity extends AppCompatActivity implements View.OnClickListener, OnMusicGetListener {
+    private final int ACCELEROMETER_NONE = 0;
+    private final int ACCELEROMETER_TIME = 1;
+    private final int ACCELEROMETER_VOLUME = 2;
 
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private Handler mHandler = new Handler();
     private SeekBar progress;
     private SeekBar volume;
     private boolean accelroIsActivate = false;
-    private GestionAccelerometre piloteAccelero;
     private ImageView play;
     private AVLoadingIndicatorView loader;
     private TextView title;
+    private int accelerometerType;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,10 +90,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         updateSeekBarProgress();
 
-        this.piloteAccelero = new GestionAccelerometre(this, this.mediaPlayer);
-
-        // Start location service.
-        startService(new Intent(this, LocationService.class));
+        // Start sensor service for manage Accelerometer and Location.
+        startService(new Intent(this, SensorService.class));
     }
 
     @Override
@@ -129,23 +129,22 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
                 break;
             case R.id.btn_timming:
-                gestionAccelero(String.valueOf(R.id.sb_avancement), false);
+                manageAccelerometer(ACCELEROMETER_TIME);
                 break;
             case R.id.btn_volume:
-                gestionAccelero(String.valueOf(R.id.sb_volume), true);
+                manageAccelerometer(ACCELEROMETER_VOLUME);
                 break;
         }
     }
 
-    private void gestionAccelero(String id, boolean isVolume) {
-        if (!accelroIsActivate) {
-            piloteAccelero.setSeekBar((SeekBar) findViewById(Integer.valueOf(id)), isVolume);
-            accelroIsActivate = true;
+    private void manageAccelerometer(int type) {
+        if (this.accelerometerType == ACCELEROMETER_NONE) {
+            this.accelerometerType = type;
         } else {
-            piloteAccelero.unSetSeekBar();
-            accelroIsActivate = false;
+            if (this.accelerometerType == type) {
+                this.accelerometerType = ACCELEROMETER_NONE;
+            }
         }
-
     }
 
     /*** EVENT BUS ***/
@@ -161,6 +160,18 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         int color = Color.rgb(r, g, b);
 
         play.setColorFilter(color);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(AccelerometerSensorEvent event) {
+        switch (this.accelerometerType) {
+            case ACCELEROMETER_TIME:
+                this.manageTime(event.mTimeProgress);
+                break;
+            case ACCELEROMETER_VOLUME:
+                this.manageVolume(event.mVolumeProgress);
+                break;
+        }
     }
 
     /*** END EVENT BUS ***/
@@ -233,5 +244,28 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
         });
+    }
+
+    private void manageTime(int value) {
+        Log.i("e","[:timeController]" + value * this.progress.getMax() / 100);
+
+        try {
+            this.mediaPlayer.seekTo(value * 1000);
+            this.progress.setProgress(value * this.progress.getMax() / 100);
+        } catch (Exception ex) {
+            Log.i("ERROR", "error - " + ex.getLocalizedMessage());
+        }
+    }
+
+    private void manageVolume(int value) {
+        Log.i("e", "[:volumeController]" + value);
+        try {
+            float volume = value / 1000.0f;
+
+            this.mediaPlayer.setVolume(volume, volume);
+            this.volume.setProgress(value);
+        } catch (Exception ex) {
+            Log.i("ERROR", "error - " + ex.getLocalizedMessage());
+        }
     }
 }

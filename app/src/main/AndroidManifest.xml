@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activity.MusicActivity" android:screenOrientation="portrait"></activity>
-        <service android:name=".Services.LocationService" />
+        <service android:name=".Services.SensorService" />
     </application>
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
 </manifest>
