@@ -1,7 +1,6 @@
 package com.sloubi.unmusic.Activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.media.MediaPlayer;
@@ -22,7 +21,6 @@ import com.sloubi.unmusic.EventBus.NewLocationEvent;
 import com.sloubi.unmusic.Interface.OnMusicGetListener;
 import com.sloubi.unmusic.Model.Music;
 import com.sloubi.unmusic.R;
-import com.sloubi.unmusic.Services.SensorService;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import org.greenrobot.eventbus.EventBus;

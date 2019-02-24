@@ -8,15 +8,16 @@
 
     <LinearLayout
         android:id="@+id/infozone"
-        android:layout_width="310dp"
-        android:layout_height="300dp"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/iv_music"
             android:layout_width="match_parent"
-            android:layout_height="270dp"
-            android:padding="20dp" />
+            android:layout_height="match_parent"
+            android:padding="20dp"
+            android:contentDescription="@string/iv_music_picture"/>
 
     </LinearLayout>
 
@@ -52,7 +53,8 @@
             android:id="@+id/btn_volume"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Volume" />
+            android:textSize="10sp"
+            android:text="@string/btn_volume" />
 
     </FrameLayout>
 
@@ -123,8 +125,9 @@
         <Button
             android:id="@+id/btn_timming"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="Timming" />
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:text="@string/btn_timming" />
 
     </LinearLayout>
 

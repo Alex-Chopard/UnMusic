@@ -1,3 +1,7 @@
 <resources>
-  <string name="app_name">UnMusic</string>
+    <string name="app_name">UnMusic</string>
+
+    <string name="btn_volume">Volume</string>
+    <string name="btn_timming">Timming</string>
+    <string name="iv_music_picture">Music picture</string>
 </resources>
