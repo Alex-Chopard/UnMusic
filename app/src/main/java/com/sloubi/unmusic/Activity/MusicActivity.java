@@ -41,8 +41,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private SeekBar volume;
     private boolean accelroIsActivate = false;
     private GestionAccelerometre piloteAccelero;
-    private Button btn_timming;
-    private Button btn_volume;
     private ImageView play;
     private AVLoadingIndicatorView loader;
     private TextView title;
@@ -61,10 +59,10 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         this.play = findViewById(R.id.iv_play);
         this.progress = findViewById(R.id.sb_avancement);
         this.volume = findViewById(R.id.sb_volume);
-        this.btn_timming = findViewById(R.id.btn_timming);
-        this.btn_volume = findViewById(R.id.btn_volume);
         this.loader = findViewById(R.id.liv_loader);
         this.title = findViewById(R.id.tv_title);
+        Button btn_timming = findViewById(R.id.btn_timming);
+        Button btn_volume = findViewById(R.id.btn_volume);
 
         // If the music is already loaded.
         if (fileUrl != null && fileUrl.length() > 0) {
@@ -76,8 +74,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         // Set listeners.
         this.play.setOnClickListener(this);
-        this.btn_timming.setOnClickListener(this);
-        this.btn_volume.setOnClickListener(this);
+        btn_timming.setOnClickListener(this);
+        btn_volume.setOnClickListener(this);
 
         this.loader.setVisibility(View.VISIBLE);
         this.play.setVisibility(View.GONE);
@@ -90,7 +88,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         updateSeekBarProgress();
 
-        // piloteAccelero = new GestionAccelerometre(this.getBaseContext(), mediaPlayer);
+        this.piloteAccelero = new GestionAccelerometre(this, this.mediaPlayer);
 
         // Start location service.
         startService(new Intent(this, LocationService.class));
@@ -131,20 +129,20 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
                 break;
             case R.id.btn_timming:
-                gestionAccelero(String.valueOf(R.id.sb_avancement), true);
+                gestionAccelero(String.valueOf(R.id.sb_avancement), false);
                 break;
             case R.id.btn_volume:
-                gestionAccelero(String.valueOf(R.id.sb_volume), false);
+                gestionAccelero(String.valueOf(R.id.sb_volume), true);
                 break;
         }
     }
 
-    private void gestionAccelero(String id, boolean estHorizontal) {
+    private void gestionAccelero(String id, boolean isVolume) {
         if (!accelroIsActivate) {
-            piloteAccelero.setSeekBar((SeekBar) findViewById(Integer.valueOf(id)), estHorizontal);
+            piloteAccelero.setSeekBar((SeekBar) findViewById(Integer.valueOf(id)), isVolume);
             accelroIsActivate = true;
         } else {
-            piloteAccelero.unssetSeekBar();
+            piloteAccelero.unSetSeekBar();
             accelroIsActivate = false;
         }
 
