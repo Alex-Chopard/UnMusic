@@ -7,12 +7,14 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
+import com.sloubi.unmusic.EventBus.NewLocationEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 // https://stackoverflow.com/a/8830135
 public class LocationService extends Service {
-    public static final String LOCATION_SERVICE_BRODCAST_NAME = "locationServiceBrodcastName";
     private static final String TAG = "[LocationService]";
     private static final int LOCATION_INTERVAL = 1000;
     private static final float LOCATION_DISTANCE = 0;
@@ -37,14 +39,8 @@ public class LocationService extends Service {
             Log.i(TAG, "[:onLocationChanged] " + location);
             mLastLocation.set(location);
 
-            // TODO: use EventBus instead of Broadcaster
-            Intent intent = new Intent(LocationService.LOCATION_SERVICE_BRODCAST_NAME);
-
-            intent.putExtra("latitude", this.mLastLocation.getLatitude());
-            intent.putExtra("longitude", this.mLastLocation.getLongitude());
-            intent.putExtra("altitude", this.mLastLocation.getAltitude());
-
-            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+            // Publish the new Location.
+            EventBus.getDefault().post(new NewLocationEvent(mLastLocation));
         }
 
         @Override

@@ -1,16 +1,15 @@
 package com.sloubi.unmusic.Activity;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.location.Location;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -19,12 +18,17 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.sloubi.unmusic.EventBus.NewLocationEvent;
 import com.sloubi.unmusic.Interface.OnMusicGetListener;
 import com.sloubi.unmusic.Model.Music;
 import com.sloubi.unmusic.R;
 import com.sloubi.unmusic.Services.GestionAccelerometre;
 import com.sloubi.unmusic.Services.LocationService;
 import com.wang.avi.AVLoadingIndicatorView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,11 +94,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         // piloteAccelero = new GestionAccelerometre(this.getBaseContext(), mediaPlayer);
 
-        // Start listening the broadcaster.
-        // TODO: replace it by an EventBus
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                new IntentFilter(LocationService.LOCATION_SERVICE_BRODCAST_NAME));
-
         // Start location service.
         startService(new Intent(this, LocationService.class));
     }
@@ -107,10 +106,15 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Unregister since the activity is about to be closed.
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -163,23 +167,22 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
-            double latitude = intent.getDoubleExtra("latitude", 0);
-            double longiture = intent.getDoubleExtra("longiture", 0);
-            double altitude = intent.getDoubleExtra("altitude", 0);
+    /*** EVENT BUS ***/
 
-            int r = createColorFromNumber(latitude * longiture);
-            int g = createColorFromNumber(latitude * altitude);
-            int b = createColorFromNumber(altitude * longiture);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(NewLocationEvent event) {
+        Location location = event.mLocation;
 
-            int color = Color.rgb(r, g, b);
+        int r = createColorFromNumber(location.getLatitude() * location.getLongitude());
+        int g = createColorFromNumber(location.getLatitude() * location.getAltitude());
+        int b = createColorFromNumber(location.getAltitude() * location.getLongitude());
 
-            play.setColorFilter(color);
-        }
-    };
+        int color = Color.rgb(r, g, b);
+
+        play.setColorFilter(color);
+    }
+
+    /*** END EVENT BUS ***/
 
     public int createColorFromNumber (double number) {
         return (int) ((number * 10000) % 255);
