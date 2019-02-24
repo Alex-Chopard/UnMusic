@@ -1,8 +1,10 @@
 package com.sloubi.unmusic.Activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -43,6 +45,10 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
 
         // Get all music.
         Music.list(this, this);
+
+        ActivityCompat.requestPermissions(PlayListActivity.this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                1);
 
         // Start sensor service for manage Accelerometer and Location.
         this.sensorService = new Intent(this, SensorService.class);
