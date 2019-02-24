@@ -41,7 +41,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private Handler mHandler = new Handler();
     private SeekBar progress;
     private SeekBar volume;
-    private boolean accelroIsActivate = false;
     private ImageView play;
     private AVLoadingIndicatorView loader;
     private TextView title;
@@ -89,9 +88,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         this.volume.setEnabled(false);
 
         updateSeekBarProgress();
-
-        // Start sensor service for manage Accelerometer and Location.
-        startService(new Intent(this, SensorService.class));
     }
 
     @Override

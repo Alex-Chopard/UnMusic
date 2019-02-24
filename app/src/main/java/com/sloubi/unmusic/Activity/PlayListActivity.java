@@ -15,6 +15,7 @@ import com.sloubi.unmusic.AppDatabase;
 import com.sloubi.unmusic.Interface.OnMusicListDownloadListener;
 import com.sloubi.unmusic.Model.Music;
 import com.sloubi.unmusic.R;
+import com.sloubi.unmusic.Services.SensorService;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
     private ListView mPlaylist;
     private LinearLayout mLoader;
     private List<Music> mMusics;
+    private Intent sensorService;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,8 +43,18 @@ public class PlayListActivity extends AppCompatActivity implements OnMusicListDo
 
         // Get all music.
         Music.list(this, this);
+
+        // Start sensor service for manage Accelerometer and Location.
+        this.sensorService = new Intent(this, SensorService.class);
+        startService(this.sensorService);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Stop service
+        stopService(this.sensorService);
+    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
