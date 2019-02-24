@@ -13,56 +13,55 @@ import android.util.Log;
 // https://stackoverflow.com/a/8830135
 public class LocationService extends Service {
     public static final String LOCATION_SERVICE_BRODCAST_NAME = "locationServiceBrodcastName";
-
     private static final String TAG = "[LocationService]";
-    private LocationManager mLocationManager = null;
-    private static final int LOCATION_INTERVAL = 0;
+    private static final int LOCATION_INTERVAL = 1000;
     private static final float LOCATION_DISTANCE = 0;
 
-    private Context context = null;
+    private LocationManager mLocationManager;
+
+    private LocationListener[] mLocationListeners = new LocationListener[]{
+            new LocationListener(LocationManager.GPS_PROVIDER),
+            new LocationListener(LocationManager.NETWORK_PROVIDER)
+    };
 
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
 
-        public LocationListener(String provider) {
-            Log.i(TAG, "LocationListener " + provider);
-            mLastLocation = new Location(provider);
+        LocationListener(String provider) {
+            Log.i(TAG, "[:constructor] " + provider);
+            this.mLastLocation = new Location(provider);
         }
 
         @Override
         public void onLocationChanged(Location location) {
-            Log.i(TAG, "onLocationChanged: " + location);
+            Log.i(TAG, "[:onLocationChanged] " + location);
             mLastLocation.set(location);
 
+            // TODO: use EventBus instead of Broadcaster
             Intent intent = new Intent(LocationService.LOCATION_SERVICE_BRODCAST_NAME);
 
             intent.putExtra("latitude", this.mLastLocation.getLatitude());
             intent.putExtra("longitude", this.mLastLocation.getLongitude());
             intent.putExtra("altitude", this.mLastLocation.getAltitude());
 
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
         }
 
         @Override
         public void onProviderDisabled(String provider) {
-            Log.i(TAG, "onProviderDisabled: " + provider);
+            Log.i(TAG, "[:onProviderDisabled]" + provider);
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-            Log.i(TAG, "onProviderEnabled: " + provider);
+            Log.i(TAG, "[:onProviderEnabled] " + provider);
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            Log.i(TAG, "onStatusChanged: " + provider);
+            Log.i(TAG, "[:onStatusChanged] " + provider);
         }
     }
-
-    LocationListener[] mLocationListeners = new LocationListener[]{
-            new LocationListener(LocationManager.GPS_PROVIDER),
-            new LocationListener(LocationManager.NETWORK_PROVIDER)
-    };
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -71,15 +70,16 @@ public class LocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "onStartCommand");
         super.onStartCommand(intent, flags, startId);
+        Log.i(TAG, "[:onStartCommand]");
         return START_STICKY;
     }
 
     @Override
     public void onCreate() {
-        Log.i(TAG, "onCreate");
+        Log.i(TAG, "[:onCreate]");
         initializeLocationManager();
+
         try {
             mLocationManager.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
@@ -103,8 +103,9 @@ public class LocationService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.i(TAG, "onDestroy");
         super.onDestroy();
+        Log.i(TAG, "[:onDestroy]");
+
         if (mLocationManager != null) {
             for (LocationListener mLocationListener : mLocationListeners) {
                 try {
@@ -117,7 +118,7 @@ public class LocationService extends Service {
     }
 
     private void initializeLocationManager() {
-        Log.i(TAG, "initializeLocationManager");
+        Log.i(TAG, "[:initializeLocationManager]");
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }

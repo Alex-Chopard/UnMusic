@@ -3,12 +3,14 @@ package com.sloubi.unmusic.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +23,7 @@ import com.sloubi.unmusic.Interface.OnMusicGetListener;
 import com.sloubi.unmusic.Model.Music;
 import com.sloubi.unmusic.R;
 import com.sloubi.unmusic.Services.GestionAccelerometre;
+import com.sloubi.unmusic.Services.LocationService;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.File;
@@ -85,14 +88,15 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         updateSeekBarProgress();
 
-        /* piloteAccelero = new GestionAccelerometre(this.getBaseContext(), mediaPlayer);
+        // piloteAccelero = new GestionAccelerometre(this.getBaseContext(), mediaPlayer);
 
         // Start listening the broadcaster.
+        // TODO: replace it by an EventBus
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter(LocationService.LOCATION_SERVICE_BRODCAST_NAME));
 
         // Start location service.
-        startService(new Intent(this, LocationService.class)); */
+        startService(new Intent(this, LocationService.class));
     }
 
     @Override
@@ -106,8 +110,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     protected void onDestroy() {
         super.onDestroy();
         // Unregister since the activity is about to be closed.
-        /*LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
-        super.onDestroy();*/
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }
 
     @Override
