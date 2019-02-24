@@ -79,6 +79,10 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         this.title.setText(fullTitle);
 
+        // Enabled user directly change SeekBar progress.
+        this.progress.setEnabled(false);
+        this.volume.setEnabled(false);
+
         updateSeekBarProgress();
 
         /* piloteAccelero = new GestionAccelerometre(this.getBaseContext(), mediaPlayer);
@@ -112,15 +116,14 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         switch (vId) {
             case R.id.iv_play:
-                ImageView play = findViewById(R.id.iv_play);
-
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
-                    play.setImageResource(android.R.drawable.ic_media_play);
+                    play.setImageResource(R.drawable.ic_play_arrow_black_24dp);
                 } else {
                     mediaPlayer.start();
-                    play.setImageResource(android.R.drawable.ic_media_pause);
+                    play.setImageResource(R.drawable.ic_pause_black_24dp);
                 }
+
                 break;
             case R.id.btn_timming:
                 gestionAccelero(String.valueOf(R.id.sb_avancement), true);
