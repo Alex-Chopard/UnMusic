@@ -33,7 +33,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.io.IOException;
 
-public class MusicActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, OnMusicGetListener {
+public class MusicActivity extends AppCompatActivity implements View.OnClickListener, OnMusicGetListener {
 
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private Handler mHandler = new Handler();
@@ -76,8 +76,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         // Set listeners.
         this.play.setOnClickListener(this);
-        this.progress.setOnSeekBarChangeListener(this);
-        this.volume.setOnSeekBarChangeListener(this);
         this.btn_timming.setOnClickListener(this);
         this.btn_volume.setOnClickListener(this);
 
@@ -149,21 +147,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             piloteAccelero.unssetSeekBar();
             accelroIsActivate = false;
         }
-
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
 
     }
 
